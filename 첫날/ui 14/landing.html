@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>gohae — 나를 기억하는 대화</title>
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          canvas: '#FAFAF7',
+          surface: '#FFFFFF',
+          subtle: '#F4F2EE',
+          ink: { primary: '#1A1A1A', secondary: '#5C5C5C', muted: '#9A9A9A' },
+          line: '#E5E2DC',
+          accent: { DEFAULT: '#2D4A4A', hover: '#1F3535', fg: '#FFFFFF' },
+          danger: { DEFAULT: '#BF3D3D', bg: '#FCEEEE' },
+        },
+        fontFamily: { sans: ['Pretendard Variable', 'Pretendard', 'system-ui', 'sans-serif'] },
+        borderRadius: { 'card': '12px', 'btn': '8px' },
+      },
+    },
+  }
+</script>
+<style>html, body { font-family: 'Pretendard Variable', Pretendard, system-ui, sans-serif; }</style>
+</head>
+<body class="bg-canvas text-ink-primary antialiased">
+
+<!-- Header -->
+<header class="sticky top-0 z-10 bg-canvas/80 backdrop-blur border-b border-line">
+  <div class="max-w-[1200px] mx-auto px-8 py-5 flex items-center justify-between">
+    <a href="#" class="text-xl font-bold tracking-tight">gohae</a>
+    <a href="onboarding.html" class="text-sm font-medium text-ink-secondary hover:text-ink-primary transition">로그인</a>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="px-8 py-32">
+  <div class="max-w-[720px] mx-auto text-center flex flex-col items-center gap-6">
+    <span class="text-sm font-medium text-accent tracking-wide">AI 상담 서비스</span>
+    <h1 class="text-5xl md:text-6xl font-bold leading-[1.1] tracking-tight">
+      나를 기억하는<br/>대화
+    </h1>
+    <p class="text-lg text-ink-secondary leading-relaxed">
+      매번 처음부터 설명하지 않아도 괜찮아요.<br/>
+      고해는 당신의 맥락을 이어갑니다.
+    </p>
+    <div class="flex gap-3 mt-4">
+      <a href="onboarding.html" class="px-6 py-3 rounded-btn bg-accent text-accent-fg text-sm font-medium hover:bg-accent-hover transition">
+        고해 시작하기
+      </a>
+      <a href="#how" class="px-6 py-3 rounded-btn border border-line text-ink-primary text-sm font-medium hover:bg-subtle transition">
+        어떻게 동작하나요?
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 차별점 -->
+<section class="px-8 py-24 bg-subtle">
+  <div class="max-w-[1200px] mx-auto">
+    <div class="text-center mb-16">
+      <p class="text-sm font-medium text-accent mb-3 tracking-wide">차별점</p>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">
+        시간이 지나도 사라지지 않는 맥락
+      </h2>
+    </div>
+    <div class="grid md:grid-cols-2 gap-6">
+
+      <div class="bg-surface rounded-card border border-line p-8 flex flex-col gap-4">
+        <div class="w-12 h-12 rounded-btn bg-accent/10 flex items-center justify-center text-accent text-xl">🧠</div>
+        <h3 class="text-xl font-bold">장기기억</h3>
+        <p class="text-ink-secondary leading-relaxed">
+          대화에서 인물관계·반복 이슈·감정 패턴을 자동으로 추출해 저장합니다.
+          다음에 만났을 때, "엄마와 화해했다"는 변화도 기억합니다.
+        </p>
+        <div class="mt-4 pt-4 border-t border-line">
+          <p class="text-xs font-medium text-ink-muted mb-2">예시 기억</p>
+          <ul class="text-sm text-ink-secondary space-y-1.5">
+            <li>· 어머니와 갈등 중 (3주 전)</li>
+            <li>· 직장 상사와 마찰 잦음</li>
+            <li>· 일요일 저녁마다 우울감 호소</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bg-surface rounded-card border border-line p-8 flex flex-col gap-4">
+        <div class="w-12 h-12 rounded-btn bg-accent/10 flex items-center justify-center text-accent text-xl">🪪</div>
+        <h3 class="text-xl font-bold">페르소나 온보딩</h3>
+        <p class="text-ink-secondary leading-relaxed">
+          첫 만남에서 당신이 누구인지 직접 알려주세요.
+          호칭·톤·맥락이 처음부터 맞춰집니다.
+        </p>
+        <div class="mt-4 pt-4 border-t border-line">
+          <p class="text-xs font-medium text-ink-muted mb-2">수집 항목</p>
+          <ul class="text-sm text-ink-secondary space-y-1.5">
+            <li>· 닉네임 · 연령대 · 호칭 선호</li>
+            <li>· 지금 가장 마음에 걸리는 일</li>
+            <li class="text-ink-muted">실명·연락처는 받지 않습니다</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 동작 방식 -->
+<section id="how" class="px-8 py-24">
+  <div class="max-w-[1200px] mx-auto">
+    <div class="text-center mb-16">
+      <p class="text-sm font-medium text-accent mb-3 tracking-wide">동작 방식</p>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">
+        세 번의 만남, 점점 깊어지는 대화
+      </h2>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="flex flex-col gap-3">
+        <span class="text-xs font-medium text-ink-muted tracking-wider">STEP 1</span>
+        <h3 class="text-xl font-bold">온보딩</h3>
+        <p class="text-ink-secondary leading-relaxed">
+          닉네임, 연령대, 호칭, 그리고 지금 마음에 걸리는 일 한 가지를 알려주세요.
+        </p>
+      </div>
+      <div class="flex flex-col gap-3">
+        <span class="text-xs font-medium text-ink-muted tracking-wider">STEP 2</span>
+        <h3 class="text-xl font-bold">대화</h3>
+        <p class="text-ink-secondary leading-relaxed">
+          편한 톤으로 이야기를 나눕니다. 끝낼 때 "대화 끝내기" 버튼을 누르면 정리됩니다.
+        </p>
+      </div>
+      <div class="flex flex-col gap-3">
+        <span class="text-xs font-medium text-ink-muted tracking-wider">STEP 3</span>
+        <h3 class="text-xl font-bold">기억</h3>
+        <p class="text-ink-secondary leading-relaxed">
+          중요한 사실은 저장됩니다. 다음에 만났을 때 처음부터 설명하지 않아도 됩니다.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 안전장치 -->
+<section class="px-8 py-16">
+  <div class="max-w-[720px] mx-auto bg-danger-bg border border-danger/20 rounded-card p-6 flex gap-4">
+    <div class="w-10 h-10 rounded-full bg-danger/10 flex items-center justify-center text-danger shrink-0">!</div>
+    <div class="flex flex-col gap-2">
+      <h4 class="font-bold text-ink-primary">고해는 의료기기가 아닙니다</h4>
+      <p class="text-sm text-ink-secondary leading-relaxed">
+        진단·치료를 제공하지 않습니다. 위기 신호가 감지되면
+        <strong class="text-danger">자살예방상담전화 1393 (24시간, 무료)</strong>를 안내합니다.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- 하단 CTA -->
+<section class="px-8 py-24 bg-accent">
+  <div class="max-w-[720px] mx-auto text-center flex flex-col items-center gap-6">
+    <h2 class="text-3xl md:text-4xl font-bold text-accent-fg tracking-tight leading-tight">
+      오늘 마음에 걸리는 일,<br/>누군가에게 털어놓고 싶을 때
+    </h2>
+    <a href="onboarding.html" class="px-7 py-3.5 rounded-btn bg-accent-fg text-accent text-sm font-bold hover:bg-subtle transition">
+      고해 시작하기
+    </a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="border-t border-line">
+  <div class="max-w-[1200px] mx-auto px-8 py-10 flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
+    <div class="flex flex-col gap-1">
+      <span class="font-bold">gohae</span>
+      <span class="text-xs text-ink-muted">© 2026 gohae. All rights reserved.</span>
+    </div>
+    <div class="flex gap-6 text-sm text-ink-secondary">
+      <a href="#" class="hover:text-ink-primary transition">이용약관</a>
+      <a href="#" class="hover:text-ink-primary transition">개인정보처리방침</a>
+      <a href="tel:1393" class="hover:text-ink-primary transition">위기상담 1393</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

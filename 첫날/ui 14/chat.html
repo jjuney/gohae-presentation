@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>gohae — 대화</title>
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          canvas: '#FAFAF7',
+          surface: '#FFFFFF',
+          subtle: '#F4F2EE',
+          ink: { primary: '#1A1A1A', secondary: '#5C5C5C', muted: '#9A9A9A' },
+          line: '#E5E2DC',
+          accent: { DEFAULT: '#2D4A4A', hover: '#1F3535', fg: '#FFFFFF' },
+          danger: { DEFAULT: '#BF3D3D', bg: '#FCEEEE' },
+        },
+        fontFamily: { sans: ['Pretendard Variable', 'Pretendard', 'system-ui', 'sans-serif'] },
+        borderRadius: { 'card': '12px', 'btn': '8px', 'bubble': '16px' },
+      },
+    },
+  }
+</script>
+<style>html, body { font-family: 'Pretendard Variable', Pretendard, system-ui, sans-serif; }</style>
+</head>
+<body class="bg-canvas text-ink-primary antialiased h-screen overflow-hidden">
+
+<div class="flex h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-[280px] shrink-0 border-r border-line bg-canvas flex flex-col">
+
+    <div class="px-6 py-5 border-b border-line">
+      <a href="landing.html" class="text-lg font-bold tracking-tight">gohae</a>
+    </div>
+
+    <!-- Persona card -->
+    <div class="p-5">
+      <div class="bg-surface border border-line rounded-card p-5 flex flex-col gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-accent text-accent-fg flex items-center justify-center font-bold">준</div>
+          <div class="flex flex-col">
+            <span class="font-bold leading-tight">준경 님</span>
+            <span class="text-xs text-ink-muted">20대 · 존댓말</span>
+          </div>
+        </div>
+        <div class="border-t border-line pt-4 flex flex-col gap-2">
+          <div class="flex justify-between text-sm">
+            <span class="text-ink-muted">총 대화</span>
+            <span class="font-medium">12회</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-ink-muted">기억된 사실</span>
+            <span class="font-medium">28개</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Memory preview -->
+    <div class="px-5 pb-5 flex-1 overflow-y-auto">
+      <p class="text-xs font-medium text-ink-muted mb-3 px-1 tracking-wider">최근 기억</p>
+      <ul class="flex flex-col gap-2">
+        <li class="bg-subtle rounded-btn px-3 py-2.5 text-xs text-ink-secondary leading-relaxed">
+          어머니와 갈등 — <span class="text-ink-muted">3일 전</span>
+        </li>
+        <li class="bg-subtle rounded-btn px-3 py-2.5 text-xs text-ink-secondary leading-relaxed">
+          직장 상사와 마찰 — <span class="text-ink-muted">1주 전</span>
+        </li>
+        <li class="bg-subtle rounded-btn px-3 py-2.5 text-xs text-ink-secondary leading-relaxed">
+          일요일 저녁 우울감 — <span class="text-ink-muted">2주 전</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Footer actions -->
+    <div class="border-t border-line p-5 flex flex-col gap-3">
+      <a href="chat.html" class="block w-full px-4 py-2.5 rounded-btn border border-line bg-surface text-sm font-medium text-ink-primary hover:bg-subtle transition text-center">
+        대화 끝내기
+      </a>
+      <div class="flex justify-between text-xs text-ink-muted">
+        <a href="#" class="hover:text-ink-secondary transition">이용약관</a>
+        <a href="#" class="hover:text-ink-secondary transition">개인정보</a>
+        <a href="tel:1393" class="hover:text-ink-secondary transition">위기 1393</a>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- Main: chat -->
+  <main class="flex-1 flex flex-col min-w-0">
+
+    <!-- Top bar -->
+    <header class="h-14 border-b border-line bg-canvas/80 backdrop-blur px-6 flex items-center justify-between shrink-0">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-accent"></span>
+        <span class="text-sm font-medium">오늘의 대화</span>
+        <span class="text-xs text-ink-muted ml-2">진행 중 · 7분</span>
+      </div>
+      <span class="text-xs text-ink-muted">2026.05.16 화요일</span>
+    </header>
+
+    <!-- Messages -->
+    <div class="flex-1 overflow-y-auto px-6 py-8">
+      <div class="max-w-[680px] mx-auto flex flex-col gap-6">
+
+        <!-- Assistant (greeting with memory) -->
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full bg-accent text-accent-fg flex items-center justify-center text-xs font-bold shrink-0 mt-1">G</div>
+          <div class="flex flex-col gap-1 max-w-[80%]">
+            <span class="text-xs text-ink-muted px-1">고해</span>
+            <div class="bg-surface border border-line rounded-bubble px-5 py-3.5 text-ink-primary leading-relaxed">
+              준경 님, 안녕하세요. 지난주에 일요일 저녁마다 마음이 무겁다고 하셨는데, 그 뒤로 어떠셨어요?
+            </div>
+          </div>
+        </div>
+
+        <!-- User -->
+        <div class="flex gap-3 justify-end">
+          <div class="flex flex-col gap-1 max-w-[80%] items-end">
+            <div class="bg-accent text-accent-fg rounded-bubble px-5 py-3.5 leading-relaxed">
+              오늘 회사에서 또 상사한테 한 소리 들었어요. PT 자료 준비했는데 이거 다시 하래요.
+            </div>
+          </div>
+        </div>
+
+        <!-- Assistant (recalls memory) -->
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full bg-accent text-accent-fg flex items-center justify-center text-xs font-bold shrink-0 mt-1">G</div>
+          <div class="flex flex-col gap-1 max-w-[80%]">
+            <span class="text-xs text-ink-muted px-1">고해</span>
+            <div class="bg-surface border border-line rounded-bubble px-5 py-3.5 text-ink-primary leading-relaxed">
+              그 상사분이랑 지난번에도 비슷한 일 있었던 거 기억해요. 그때는 회피보다 정면 대응하고 싶다고 하셨었죠. 오늘은 어떤 마음이세요?
+            </div>
+            <!-- Memory tag (subtle indicator) -->
+            <div class="flex items-center gap-1.5 px-1 mt-1">
+              <span class="text-[10px] text-ink-muted">💭 활용된 기억</span>
+              <span class="text-[10px] bg-subtle text-ink-secondary rounded px-1.5 py-0.5">직장 상사와 마찰</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- User -->
+        <div class="flex gap-3 justify-end">
+          <div class="flex flex-col gap-1 max-w-[80%] items-end">
+            <div class="bg-accent text-accent-fg rounded-bubble px-5 py-3.5 leading-relaxed">
+              그래도 어제 엄마랑 통화하면서 위로받았어요. 화해까진 아니지만 좀 풀렸어요.
+            </div>
+          </div>
+        </div>
+
+        <!-- Assistant (memory update awareness) -->
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full bg-accent text-accent-fg flex items-center justify-center text-xs font-bold shrink-0 mt-1">G</div>
+          <div class="flex flex-col gap-1 max-w-[80%]">
+            <span class="text-xs text-ink-muted px-1">고해</span>
+            <div class="bg-surface border border-line rounded-bubble px-5 py-3.5 text-ink-primary leading-relaxed">
+              어머니와 거리감 있다고 하셨던 게 마음에 걸렸는데, 다행이에요. 어떤 얘기 나누면서 풀리셨어요?
+            </div>
+            <div class="flex items-center gap-1.5 px-1 mt-1">
+              <span class="text-[10px] text-ink-muted">💭 활용된 기억</span>
+              <span class="text-[10px] bg-subtle text-ink-secondary rounded px-1.5 py-0.5">어머니와 갈등</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Crisis card example (subtle but visible) -->
+        <div class="mt-2 bg-danger-bg border border-danger/20 rounded-card p-5 flex gap-4">
+          <div class="w-9 h-9 rounded-full bg-danger/10 text-danger flex items-center justify-center font-bold shrink-0">!</div>
+          <div class="flex flex-col gap-1.5">
+            <p class="font-bold text-ink-primary text-sm">예시 — 위기 신호 감지 시 즉시 노출됩니다</p>
+            <p class="text-sm text-ink-secondary leading-relaxed">
+              지금 많이 힘드신 것 같아요. 혼자 감당하기 어려운 마음이 들 땐, 전문 상담사와 익명으로 이야기할 수 있는 곳이 있어요. <strong class="text-danger">자살예방상담전화 1393 (24시간, 무료)</strong>
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Composer -->
+    <div class="border-t border-line bg-canvas px-6 py-4 shrink-0">
+      <div class="max-w-[680px] mx-auto">
+        <div class="bg-surface border border-line rounded-card p-3 flex items-end gap-2 focus-within:border-accent/50 transition">
+          <textarea
+            rows="1"
+            placeholder="지금 마음에 걸리는 일을 적어보세요…"
+            class="flex-1 resize-none outline-none bg-transparent text-ink-primary placeholder:text-ink-muted text-sm leading-relaxed py-1.5 px-2 max-h-32"
+          ></textarea>
+          <button class="shrink-0 w-9 h-9 rounded-btn bg-accent text-accent-fg flex items-center justify-center hover:bg-accent-hover transition">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+          </button>
+        </div>
+        <p class="text-[11px] text-ink-muted text-center mt-2">
+          고해는 의료기기가 아니며 진단·치료를 제공하지 않습니다.
+        </p>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>

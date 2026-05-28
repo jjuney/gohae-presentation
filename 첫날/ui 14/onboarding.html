@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>gohae — 시작하기 전에</title>
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          canvas: '#FAFAF7',
+          surface: '#FFFFFF',
+          subtle: '#F4F2EE',
+          ink: { primary: '#1A1A1A', secondary: '#5C5C5C', muted: '#9A9A9A' },
+          line: '#E5E2DC',
+          accent: { DEFAULT: '#2D4A4A', hover: '#1F3535', fg: '#FFFFFF' },
+          danger: { DEFAULT: '#BF3D3D', bg: '#FCEEEE' },
+        },
+        fontFamily: { sans: ['Pretendard Variable', 'Pretendard', 'system-ui', 'sans-serif'] },
+        borderRadius: { 'card': '12px', 'btn': '8px' },
+      },
+    },
+  }
+</script>
+<style>
+  html, body { font-family: 'Pretendard Variable', Pretendard, system-ui, sans-serif; }
+  input[type="radio"]:checked + label { border-color: #2D4A4A; background-color: rgba(45, 74, 74, 0.05); }
+  input[type="radio"]:checked + label .radio-dot { background-color: #2D4A4A; }
+  input[type="radio"]:checked + label .radio-dot::after { opacity: 1; }
+</style>
+</head>
+<body class="bg-canvas text-ink-primary antialiased min-h-screen">
+
+<!-- Header (minimal) -->
+<header class="border-b border-line">
+  <div class="max-w-[1200px] mx-auto px-8 py-5">
+    <a href="landing.html" class="text-xl font-bold tracking-tight">gohae</a>
+  </div>
+</header>
+
+<main class="px-6 py-16 md:py-20">
+  <div class="max-w-[560px] mx-auto">
+
+    <!-- Progress / step -->
+    <div class="flex items-center gap-3 mb-8">
+      <span class="text-xs font-medium text-accent tracking-wider">시작 전</span>
+      <div class="flex-1 h-[2px] bg-line rounded-full overflow-hidden">
+        <div class="h-full w-full bg-accent rounded-full"></div>
+      </div>
+      <span class="text-xs text-ink-muted">마지막 단계</span>
+    </div>
+
+    <!-- Title -->
+    <div class="flex flex-col gap-3 mb-10">
+      <h1 class="text-3xl md:text-4xl font-bold tracking-tight leading-tight">
+        고해를 시작하기 전에
+      </h1>
+      <p class="text-ink-secondary leading-relaxed">
+        당신에 대해 조금만 알려주세요. 이 정보는 대화의 톤과 맥락을 맞추는 데 쓰입니다.
+        <br/>
+        <span class="text-ink-muted text-sm">실명·주소·연락처는 받지 않습니다.</span>
+      </p>
+    </div>
+
+    <!-- Form -->
+    <form class="flex flex-col gap-7" action="chat.html" method="get">
+
+      <!-- 닉네임 -->
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-ink-primary">
+          뭐라고 불러드릴까요?
+          <span class="text-danger ml-0.5">*</span>
+        </label>
+        <input
+          type="text"
+          placeholder="예: 준경"
+          class="w-full px-4 py-3 bg-surface border border-line rounded-btn text-ink-primary placeholder:text-ink-muted outline-none focus:border-accent transition"
+          value="준경"
+        />
+        <p class="text-xs text-ink-muted">대화에서 부를 호칭이에요. 본명이 아니어도 괜찮습니다.</p>
+      </div>
+
+      <!-- 연령대 -->
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-ink-primary">
+          연령대를 선택해주세요
+          <span class="text-danger ml-0.5">*</span>
+        </label>
+        <div class="grid grid-cols-4 gap-2">
+          <input type="radio" name="age" id="age-10" class="hidden peer/age-10" />
+          <label for="age-10" class="cursor-pointer px-4 py-3 bg-surface border border-line rounded-btn text-center text-sm font-medium hover:border-ink-muted transition">10대</label>
+
+          <input type="radio" name="age" id="age-20" class="hidden peer/age-20" checked />
+          <label for="age-20" class="cursor-pointer px-4 py-3 bg-surface border border-line rounded-btn text-center text-sm font-medium hover:border-ink-muted transition">20대</label>
+
+          <input type="radio" name="age" id="age-30" class="hidden peer/age-30" />
+          <label for="age-30" class="cursor-pointer px-4 py-3 bg-surface border border-line rounded-btn text-center text-sm font-medium hover:border-ink-muted transition">30대</label>
+
+          <input type="radio" name="age" id="age-40" class="hidden peer/age-40" />
+          <label for="age-40" class="cursor-pointer px-4 py-3 bg-surface border border-line rounded-btn text-center text-sm font-medium hover:border-ink-muted transition">40대+</label>
+        </div>
+      </div>
+
+      <!-- 호칭 선호 -->
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-ink-primary">
+          어떤 톤으로 대화할까요?
+          <span class="text-danger ml-0.5">*</span>
+        </label>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="radio" name="tone" id="tone-formal" class="hidden peer/tone-f" checked />
+          <label for="tone-formal" class="cursor-pointer px-4 py-4 bg-surface border border-line rounded-btn hover:border-ink-muted transition flex flex-col gap-1">
+            <span class="font-medium text-sm">존댓말</span>
+            <span class="text-xs text-ink-muted">"오늘 어떠셨어요?"</span>
+          </label>
+
+          <input type="radio" name="tone" id="tone-casual" class="hidden peer/tone-c" />
+          <label for="tone-casual" class="cursor-pointer px-4 py-4 bg-surface border border-line rounded-btn hover:border-ink-muted transition flex flex-col gap-1">
+            <span class="font-medium text-sm">반말</span>
+            <span class="text-xs text-ink-muted">"오늘 어땠어?"</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 자유 서술 -->
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-ink-primary flex items-center gap-2">
+          지금 가장 마음에 걸리는 일이 있나요?
+          <span class="text-xs font-normal text-ink-muted">(선택)</span>
+        </label>
+        <textarea
+          rows="4"
+          placeholder="간단한 단어 한두 개여도 좋고, 길게 적어주셔도 좋아요. 비워두셔도 괜찮습니다."
+          class="w-full px-4 py-3 bg-surface border border-line rounded-btn text-ink-primary placeholder:text-ink-muted outline-none focus:border-accent transition resize-none leading-relaxed"
+        ></textarea>
+        <p class="text-xs text-ink-muted">첫 대화의 시작점으로 쓰입니다. 나중에 언제든 추가하거나 잊혀지게 할 수 있어요.</p>
+      </div>
+
+      <!-- 약관 동의 -->
+      <div class="bg-subtle rounded-btn p-4 flex items-start gap-3">
+        <input type="checkbox" id="agree" class="mt-1 w-4 h-4 accent-accent" checked />
+        <label for="agree" class="text-sm text-ink-secondary leading-relaxed cursor-pointer">
+          <a href="#" class="text-ink-primary font-medium underline underline-offset-2">이용약관</a>과
+          <a href="#" class="text-ink-primary font-medium underline underline-offset-2">개인정보처리방침</a>에 동의합니다.
+          민감한 대화 내용은 Anthropic·OpenAI 서비스로 전송되며, 그 외 제3자에게 공유되지 않습니다.
+        </label>
+      </div>
+
+      <!-- CTA -->
+      <button
+        type="submit"
+        class="w-full mt-2 px-6 py-4 rounded-btn bg-accent text-accent-fg font-bold hover:bg-accent-hover transition"
+      >
+        고해 시작하기
+      </button>
+
+      <!-- Crisis hint -->
+      <div class="text-xs text-ink-muted text-center leading-relaxed pt-2">
+        지금 너무 힘드시다면 <a href="tel:1393" class="text-danger font-medium hover:underline">1393 자살예방상담전화</a>에 먼저 연락해주세요.
+      </div>
+
+    </form>
+
+  </div>
+</main>
+
+</body>
+</html>

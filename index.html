@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>12시간 안에 백엔드 개발자가 프로덕트 만들기 (with Claude)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0f11;
+    --surface: #1a1a1f;
+    --border: #2e2e38;
+    --accent: #2D8C7A;
+    --accent2: #4ECBA4;
+    --text: #f0f0f0;
+    --muted: #888898;
+    --d1: #2D8C7A;
+    --d2: #6B6BDB;
+    --d3: #DB6B6B;
+    --d4: #DBA96B;
+    --dp: #6BDB6B;
+  }
+
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg); color: var(--text);
+    user-select: none;
+  }
+
+  #deck { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+  .slide.active { opacity: 1; pointer-events: auto; }
+
+  /* ── Header ── */
+  .slide-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 36px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0; min-height: 52px;
+  }
+  .day-badge {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    padding: 3px 10px; border-radius: 20px; text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .slide-title { font-size: 17px; font-weight: 600; color: var(--text); flex: 1; }
+
+  /* ── Body ── */
+  .slide-body {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 18px 36px 14px; gap: 14px; overflow: hidden;
+  }
+
+  /* ── Images ── */
+  .img-wrap {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    width: 100%; overflow: hidden; min-height: 0;
+  }
+  .img-wrap img {
+    max-width: 100%; max-height: 100%;
+    object-fit: contain; border-radius: 8px;
+    box-shadow: 0 6px 32px rgba(0,0,0,0.55);
+    border: 1px solid var(--border);
+  }
+
+  .img-pair {
+    flex: 1; display: flex; gap: 14px; width: 100%; overflow: hidden; min-height: 0;
+  }
+  .img-slot {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    overflow: hidden; min-height: 0;
+  }
+  .img-slot img {
+    max-width: 100%; max-height: 100%;
+    object-fit: contain; border-radius: 8px;
+    box-shadow: 0 6px 32px rgba(0,0,0,0.55);
+    border: 1px solid var(--border);
+  }
+
+  .caption {
+    font-size: 13px; color: var(--muted); text-align: center;
+    padding: 0 24px; flex-shrink: 0; line-height: 1.6; max-width: 820px;
+  }
+
+  /* ── Nav ── */
+  .nav-btn {
+    position: fixed; top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer;
+    width: 36px; height: 72px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; border-radius: 6px;
+    transition: all 0.2s; z-index: 100;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+  #btn-prev { left: 10px; }
+  #btn-next { right: 10px; }
+
+  #footer {
+    position: fixed; bottom: 14px; right: 20px;
+    font-size: 11px; color: #444454; z-index: 100;
+  }
+
+  /* ── Title slide ── */
+  .title-slide {
+    background: radial-gradient(ellipse at 25% 45%, rgba(45,140,122,0.14) 0%, transparent 55%),
+                radial-gradient(ellipse at 75% 55%, rgba(107,107,219,0.08) 0%, transparent 50%);
+  }
+
+  /* ── Timeline slide ── */
+  .timeline {
+    display: flex; gap: 16px; width: 100%; max-width: 960px;
+    align-items: stretch;
+  }
+  .timeline-day {
+    flex: 1; border-radius: 10px; padding: 18px 14px;
+    border: 1px solid; display: flex; flex-direction: column; gap: 8px;
+  }
+  .tday-num { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  .tday-label { font-size: 15px; font-weight: 700; }
+  .tday-items { list-style: none; display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
+  .tday-items li { font-size: 11px; color: var(--muted); padding-left: 12px; position: relative; }
+  .tday-items li::before { content: '·'; position: absolute; left: 2px; }
+
+  /* ── Reflection slide ── */
+  .reflection {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    width: 100%; max-width: 880px;
+  }
+  .ref-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 22px 20px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .ref-box h3 { font-size: 15px; font-weight: 700; }
+  .ref-box ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .ref-box li {
+    font-size: 13px; color: var(--muted); padding-left: 18px;
+    position: relative; line-height: 1.6;
+  }
+  .ref-box li::before { content: '→'; position: absolute; left: 0; }
+  .ref-box li strong { color: var(--text); }
+
+  /* ── End slide ── */
+  .end-url { font-size: 34px; font-weight: 700; color: var(--accent2); letter-spacing: -0.01em; }
+  .stack-box {
+    padding: 16px 24px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 10px;
+    font-size: 13px; color: var(--muted); line-height: 1.9;
+    text-align: left; max-width: 480px; margin-top: 16px;
+  }
+  .stack-box strong { color: var(--text); font-weight: 600; display: block; margin-bottom: 4px; }
+
+  /* ── Day color tokens ── */
+  .d1  { color:var(--d1); border-color:rgba(45,140,122,0.3);  background:rgba(45,140,122,0.06); }
+  .d2  { color:var(--d2); border-color:rgba(107,107,219,0.3); background:rgba(107,107,219,0.06); }
+  .d3  { color:var(--d3); border-color:rgba(219,107,107,0.3); background:rgba(219,107,107,0.06); }
+  .d4  { color:var(--d4); border-color:rgba(219,169,107,0.3); background:rgba(219,169,107,0.06); }
+  .dp  { color:var(--dp); border-color:rgba(107,219,107,0.3); background:rgba(107,219,107,0.06); }
+
+  .badge-d1 { background:rgba(45,140,122,0.18);  color:var(--d1); }
+  .badge-d2 { background:rgba(107,107,219,0.18); color:var(--d2); }
+  .badge-d3 { background:rgba(219,107,107,0.18); color:var(--d3); }
+  .badge-d4 { background:rgba(219,169,107,0.18); color:var(--d4); }
+  .badge-dp { background:rgba(107,219,107,0.18); color:var(--dp); }
+  .badge-ov { background:rgba(255,255,255,0.08); color:var(--muted); }
+</style>
+</head>
+<body>
+<div id="deck">
+
+  <!-- ═══════════════════════════════ SLIDE 0 · TITLE ═══════════════════════════════ -->
+  <div class="slide active title-slide" id="s0">
+    <div class="slide-body" style="justify-content:center; gap:20px;">
+      <div style="text-align:center; display:flex; flex-direction:column; align-items:center; gap:18px;">
+        <div style="font-size:12px; color:var(--accent2); font-weight:600; letter-spacing:0.14em; text-transform:uppercase;">
+          Side Project Retrospective
+        </div>
+        <div style="font-size:clamp(34px,5vw,62px); font-weight:900; line-height:1.2;">
+          12시간 안에<br>백엔드 개발자가<br>프로덕트 하나 만들기
+        </div>
+        <div style="font-size:22px; font-weight:300; color:var(--accent2);">with Claude Code</div>
+        <div style="font-size:13px; color:var(--muted); margin-top:8px;">오준경 &nbsp;·&nbsp; jjuney &nbsp;·&nbsp; 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 0b · INTRO ═══════════════════════════════ -->
+  <div class="slide" id="s0b">
+    <div class="slide-body" style="justify-content:center;">
+      <div style="width:100%; max-width:780px; display:flex; flex-direction:column; gap:20px;">
+        <div style="font-size:13px; color:var(--accent2); font-weight:600; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:4px;">이 발표에 앞서</div>
+
+        <div style="display:flex; flex-direction:column; gap:14px;">
+
+          <div style="display:flex; gap:16px; align-items:flex-start; padding:18px 20px; background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent2); border-radius:8px;">
+            <div style="font-size:22px; flex-shrink:0;">🎯</div>
+            <div>
+              <div style="font-size:15px; font-weight:700; margin-bottom:4px;">목표</div>
+              <div style="font-size:13px; color:var(--muted); line-height:1.7;">100% 바이브코딩으로 기획 → UX/UI → FE/BE → 배포까지, 혼자서 완주하기</div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:16px; align-items:flex-start; padding:18px 20px; background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--d2); border-radius:8px;">
+            <div style="font-size:22px; flex-shrink:0;">⚠️</div>
+            <div>
+              <div style="font-size:15px; font-weight:700; margin-bottom:4px;">기술적 깊이는 없습니다</div>
+              <div style="font-size:13px; color:var(--muted); line-height:1.7;">코드 리뷰가 아닙니다. "어떻게 잘 짰는가"가 아니라 <strong style="color:var(--text)">"얼마나 빠르게 만들었는가"</strong>에 집중합니다</div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:16px; align-items:flex-start; padding:18px 20px; background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--d3); border-radius:8px;">
+            <div style="font-size:22px; flex-shrink:0;">🤖</div>
+            <div>
+              <div style="font-size:15px; font-weight:700; margin-bottom:4px;">Claude가 주도, 나는 방향</div>
+              <div style="font-size:13px; color:var(--muted); line-height:1.7;">코드는 Claude가 작성합니다. 나는 기획 의도, 제품 방향, 결과물 판단만 담당합니다</div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:16px; align-items:flex-start; padding:18px 20px; background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--d4); border-radius:8px;">
+            <div style="font-size:22px; flex-shrink:0;">🔧</div>
+            <div>
+              <div style="font-size:15px; font-weight:700; margin-bottom:4px;">백엔드 개발자가 풀스택으로</div>
+              <div style="font-size:13px; color:var(--muted); line-height:1.7;">평소 잘 모르던 FE · 디자인 · 인프라 영역도 Claude 덕에 막힘 없이 진행했습니다</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 1 · TIMELINE ═══════════════════════════════ -->
+  <div class="slide" id="s1">
+    <div class="slide-header">
+      <span class="day-badge badge-ov">Overview</span>
+      <span class="slide-title">12시간 타임라인</span>
+    </div>
+    <div class="slide-body">
+      <div class="timeline">
+        <div class="timeline-day d1">
+          <div class="tday-num">Day 1 · 3h</div>
+          <div class="tday-label">기획 &amp; 설계</div>
+          <ul class="tday-items">
+            <li>주제 선정 · 서비스명</li>
+            <li>Notion MCP 기획문서</li>
+            <li>UI 시안 생성</li>
+            <li>FE/BE 테크스펙</li>
+            <li>프로젝트 세팅</li>
+          </ul>
+        </div>
+        <div class="timeline-day d2">
+          <div class="tday-num">Day 2 · 3h</div>
+          <div class="tday-label">개발 &amp; 배포</div>
+          <ul class="tday-items">
+            <li>Git · DB · pgvector</li>
+            <li>Google 소셜 로그인</li>
+            <li>AI 대화 · 장기기억</li>
+            <li>Vercel 배포</li>
+          </ul>
+        </div>
+        <div class="timeline-day d3">
+          <div class="tday-num">Day 3 · 3h</div>
+          <div class="tday-label">피드백 &amp; 개선</div>
+          <ul class="tday-items">
+            <li>실사용 피드백 반영</li>
+            <li>파비콘 · 브랜드 수정</li>
+            <li>기억 모달 · 봇 성격</li>
+            <li>이미지 · 웹서치</li>
+          </ul>
+        </div>
+        <div class="timeline-day d4">
+          <div class="tday-num">Day 4 · 3h</div>
+          <div class="tday-label">추가기능 &amp; 안정화</div>
+          <ul class="tday-items">
+            <li>답변 칩 자동 생성</li>
+            <li>Cloudflare 리버스 프록시</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ DAY 1 ══════════════ -->
+
+  <!-- SLIDE 2 · 주제 선정 -->
+  <div class="slide" id="s2">
+    <div class="slide-header">
+      <span class="day-badge badge-d1">첫째날</span>
+      <span class="slide-title">주제 선정 — 상담봇 만들기, 서비스명 정하기</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-wrap">
+        <img src="첫날/스샷1.png" alt="Claude 채팅 아이디어" />
+      </div>
+      <div class="caption">Claude 채팅으로 아이디어 탐색 → 장기기억 기반 AI 상담 서비스 <strong style="color:var(--text)">"고해(gohae)"</strong> 결정</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3 · Claude Code 이동 -->
+  <div class="slide" id="s3">
+    <div class="slide-header">
+      <span class="day-badge badge-d1">첫째날</span>
+      <span class="slide-title">Claude Code로 이동 — CLAUDE.md 읽히기</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-wrap">
+        <img src="첫날/스샷3.png" alt="Claude Code CLAUDE.md" />
+      </div>
+      <div class="caption">채팅에서 구상한 내용을 CLAUDE.md로 정리 → Claude Code에 컨텍스트 주입, 프로젝트 전체를 이해한 상태로 작업 시작</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4 · Notion MCP 기획문서 작성 -->
+  <div class="slide" id="s4">
+    <div class="slide-header">
+      <span class="day-badge badge-d1">첫째날</span>
+      <span class="slide-title">Notion MCP로 기획문서 자동 작성</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-pair">
+        <div class="img-slot">
+          <img src="첫날/스샷4.png" alt="Notion MCP 호출" />
+        </div>
+        <div class="img-slot">
+          <img src="첫날/스샷7.png" alt="실제 기획문서" />
+        </div>
+      </div>
+      <div class="caption">Notion MCP 호출 → Claude가 직접 Notion 페이지에 기획문서 작성 (서비스 개요 · 핵심 기능 · 기술 스택 · 로드맵)</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5 · 기획문서 리뷰 -->
+  <div class="slide" id="s5">
+    <div class="slide-header">
+      <span class="day-badge badge-d1">첫째날</span>
+      <span class="slide-title">기획문서 리뷰 → v0.2 확정</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-wrap">
+        <img src="첫날/스샷9.png" alt="기획문서 v0.2 리뷰" />
+      </div>
+      <div class="caption">작성된 기획문서를 다시 Claude에게 리뷰 요청 → 스코프 · 기술스택 · 12시간 타임박스 최종 결정 (v0.2)</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6 · UI 그리기 -->
+  <div class="slide" id="s6">
+    <div class="slide-header">
+      <span class="day-badge badge-d1">첫째날</span>
+      <span class="slide-title">UI 그리기 — Figma MCP</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-wrap">
+        <img src="첫날/스샷11.png" alt="Figma MCP UI 생성" />
+      </div>
+      <div class="caption">Figma MCP로 디자인 토큰(색상 12개 · 타이포 · Radius) 설정 → 랜딩 · 채팅 · 온보딩 화면 시안 직접 생성</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7 · FE/BE 테크스펙 -->
+  <div class="slide" id="s7">
+    <div class="slide-header">
+      <span class="day-badge badge-d1">첫째날</span>
+      <span class="slide-title">FE / BE 테크스펙 작성 및 리뷰</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-wrap">
+        <img src="첫날/스샷15.png" alt="FE BE 테크스펙" />
+      </div>
+      <div class="caption">기획문서 + UI 시안을 바탕으로 Notion에 FE · BE 테크스펙 동시 작성 → 리뷰 후 최종 확정</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8 · 프로젝트 세팅 -->
+  <div class="slide" id="s8">
+    <div class="slide-header">
+      <span class="day-badge badge-d1">첫째날</span>
+      <span class="slide-title">프로젝트 세팅</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-wrap">
+        <img src="첫날/스샷19.png" alt="프로젝트 부트스트랩" />
+      </div>
+      <div class="caption">Next.js 16 · TypeScript · Supabase · Drizzle ORM 부트스트랩 — Claude가 현재 디렉토리 상태 확인 후 자동으로 세팅 진행</div>
+    </div>
+  </div>
+
+  <!-- ══════════════ DAY 2 ══════════════ -->
+
+  <!-- SLIDE 9 · Git 세팅 -->
+  <div class="slide" id="s9">
+    <div class="slide-header">
+      <span class="day-badge badge-d2">둘째날</span>
+      <span class="slide-title">Git 세팅</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-wrap">
+        <img src="둘째날/스샷1.png" alt="GitHub 레포" />
+      </div>
+      <div class="caption">GitHub Private 레포 생성 · bootstrap 브랜치로 초기 커밋 — 폴더 구조 · CLAUDE.md · AGENTS.md 포함</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9b · 개발 로드맵 -->
+  <div class="slide" id="s9b">
+    <div class="slide-header">
+      <span class="day-badge badge-d2">둘째날</span>
+      <span class="slide-title">개발 로드맵 설정</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-wrap">
+        <img src="둘째날/스샷2.png" alt="개발 로드맵" />
+      </div>
+      <div class="caption">Claude가 남은 사전 준비 항목을 체크리스트로 정리 — 순서대로 자동화 진행</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10 · DB 설정 -->
+  <div class="slide" id="s10">
+    <div class="slide-header">
+      <span class="day-badge badge-d2">둘째날</span>
+      <span class="slide-title">데이터베이스 설정 — Supabase + pgvector</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-pair">
+        <div class="img-slot">
+          <img src="둘째날/스샷4.png" alt="Supabase 대시보드" />
+        </div>
+        <div class="img-slot">
+          <img src="둘째날/스샷5.png" alt="pgvector extension" />
+        </div>
+      </div>
+      <div class="caption">Supabase(PostgreSQL) 프로젝트 생성 (Seoul region) + pgvector 0.8.0 extension 활성화 → 벡터 검색 환경 구축</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11 · 소셜 로그인 -->
+  <div class="slide" id="s11">
+    <div class="slide-header">
+      <span class="day-badge badge-d2">둘째날</span>
+      <span class="slide-title">소셜 로그인 세팅 — Google OAuth</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-pair">
+        <div class="img-slot">
+          <img src="둘째날/스샷10.png" alt="Google OAuth Console" />
+        </div>
+        <div class="img-slot">
+          <img src="둘째날/스샷11.png" alt="Supabase Auth Google Enabled" />
+        </div>
+      </div>
+      <div class="caption">Google Cloud Console에서 OAuth 앱 생성 → Supabase Auth에 연동 (Google Enabled 확인)</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12 · 런서버 로그인 -->
+  <div class="slide" id="s12">
+    <div class="slide-header">
+      <span class="day-badge badge-d2">둘째날</span>
+      <span class="slide-title">런서버 — 로그인 화면 & 소셜 로그인 작동</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-pair">
+        <div class="img-slot">
+          <img src="둘째날/스샷12.png" alt="로그인 화면" />
+        </div>
+        <div class="img-slot">
+          <img src="둘째날/스샷13.png" alt="Google 계정 선택" />
+        </div>
+      </div>
+      <div class="caption">로컬 서버에서 실제 로그인 화면 렌더링 + Google 소셜 로그인 플로우 정상 작동 확인</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13a · 장기기억 1/2 -->
+  <div class="slide" id="s13a">
+    <div class="slide-header">
+      <span class="day-badge badge-d2">둘째날</span>
+      <span class="slide-title">온보딩 → AI 대화 · 장기기억 확인 (1/2)</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-pair">
+        <div class="img-slot"><img src="둘째날/스크린샷 15.png" alt="장기기억 대화" /></div>
+        <div class="img-slot"><img src="둘째날/스샷17.png" alt="정리하는 중" /></div>
+      </div>
+      <div class="caption">온보딩 완료 후 AI와 대화 — "정리하는 중..." 상태로 대화 내용을 장기기억으로 저장</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13b · 장기기억 2/2 -->
+  <div class="slide" id="s13b">
+    <div class="slide-header">
+      <span class="day-badge badge-d2">둘째날</span>
+      <span class="slide-title">온보딩 → AI 대화 · 장기기억 확인 (2/2)</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-pair">
+        <div class="img-slot"><img src="둘째날/스샷18.png" alt="대화 시작" /></div>
+        <div class="img-slot"><img src="둘째날/스샷19.png" alt="장기기억 응답" /></div>
+      </div>
+      <div class="caption">이전 대화에서 "주식으로 20만원 손실"을 기억한 채 다음 대화에서 자연스럽게 언급</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14a · 배포 1/3 -->
+  <div class="slide" id="s14a">
+    <div class="slide-header">
+      <span class="day-badge badge-d2">둘째날</span>
+      <span class="slide-title">Vercel 배포 → 실제 웹사이트 접속 (1/2)</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-pair">
+        <div class="img-slot"><img src="둘째날/스샷20.png" alt="Vercel 배포 중" /></div>
+        <div class="img-slot"><img src="둘째날/스샷21.png" alt="배포 목록" /></div>
+      </div>
+      <div class="caption">Vercel 배포 시작 → 빌드 · 배포 완료 목록 확인</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14b · 배포 2/3 -->
+  <div class="slide" id="s14b">
+    <div class="slide-header">
+      <span class="day-badge badge-d2">둘째날</span>
+      <span class="slide-title">Vercel 배포 → 실제 웹사이트 접속 (2/2)</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-pair">
+        <div class="img-slot"><img src="둘째날/스샷22.png" alt="gohae.vercel.app" /></div>
+        <div class="img-slot"><img src="둘째날/스샷23.png" alt="Okta 인증" /></div>
+      </div>
+      <div class="caption">gohae.vercel.app 실제 접속 성공 — 로그인 플로우 정상 작동 확인</div>
+    </div>
+  </div>
+
+  
+
+  <!-- ══════════════ DAY 3 ══════════════ -->
+
+  <!-- SLIDE 15 · 피드백 정리 -->
+  <div class="slide" id="s15">
+    <div class="slide-header">
+      <span class="day-badge badge-d3">셋째날</span>
+      <span class="slide-title">한 주 실사용 후 피드백 정리</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-wrap">
+        <img src="셋째날/1.png" alt="피드백 목록" />
+      </div>
+      <div class="caption">직접 사용하면서 느낀 개선점 10가지 — 이걸 바탕으로 셋째날 작업 전부 진행</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16 · 파비콘 & 브랜드 -->
+  <div class="slide" id="s16">
+    <div class="slide-header">
+      <span class="day-badge badge-d3">셋째날</span>
+      <span class="slide-title">파비콘 생성 + 브랜드 카피 변경</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-pair">
+        <div class="img-slot">
+          <img src="셋째날/3.png" alt="파비콘 탭" />
+        </div>
+        <div class="img-slot">
+          <img src="셋째날/5.png" alt="머릿속 감정 쓰레기통 랜딩" />
+        </div>
+      </div>
+      <div class="caption">파비콘 생성 + 서비스 카피를 "나를 기억하는 대화" → <strong style="color:var(--text)">"머릿속 감정 쓰레기통"</strong>으로 변경</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 17 · 기억 모달 -->
+  <div class="slide" id="s17">
+    <div class="slide-header">
+      <span class="day-badge badge-d3">셋째날</span>
+      <span class="slide-title">"기억했어요" 모달 — 장기기억 시각화</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-wrap">
+        <img src="셋째날/4.png" alt="기억했어요 모달" />
+      </div>
+      <div class="caption">대화 종료 후 자동으로 기억을 정리하고 "기억했어요 — 이번 대화에서 2가지 사실을 정리했어요" 모달 표시</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 18a · 봇 성격 1/2 -->
+  <div class="slide" id="s18a">
+    <div class="slide-header">
+      <span class="day-badge badge-d3">셋째날</span>
+      <span class="slide-title">AI 봇 성격 조정 기능 (1/2)</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-pair">
+        <div class="img-slot"><img src="셋째날/7.png" alt="온보딩 성격 슬라이더" /></div>
+        <div class="img-slot"><img src="셋째날/8.png" alt="casual 스타일 답변" /></div>
+      </div>
+      <div class="caption">온보딩 화면에서 공감 / 유머 / 조언 레벨 슬라이더 설정 → 설정된 성격으로 첫 답변 생성</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 18b · 봇 성격 2/2 -->
+  <div class="slide" id="s18b">
+    <div class="slide-header">
+      <span class="day-badge badge-d3">셋째날</span>
+      <span class="slide-title">AI 봇 성격 조정 기능 (2/2)</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-pair">
+        <div class="img-slot"><img src="셋째날/9.png" alt="상담사 설정 모달" /></div>
+        <div class="img-slot"><img src="셋째날/11.png" alt="다른 성격 답변 비교" /></div>
+      </div>
+      <div class="caption">대화 중에도 상담사 설정 모달로 성격 재조정 가능 → 같은 질문에 전혀 다른 어조의 답변</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 19 · 이미지 업로드 -->
+  <div class="slide" id="s19">
+    <div class="slide-header">
+      <span class="day-badge badge-d3">셋째날</span>
+      <span class="slide-title">이미지 업로드 기능</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-pair">
+        <div class="img-slot">
+          <img src="셋째날/13.png" alt="이미지 업로드 대화 1" />
+        </div>
+        <div class="img-slot">
+          <img src="셋째날/14.png" alt="이미지 업로드 대화 2" />
+        </div>
+      </div>
+      <div class="caption">이미지를 채팅에 첨부해서 대화 — "이거 뭔지 맞춰봐" → AI가 이미지 인식 후 대화 진행</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20 · 웹서치 -->
+  <div class="slide" id="s20">
+    <div class="slide-header">
+      <span class="day-badge badge-d3">셋째날</span>
+      <span class="slide-title">웹서치 툴 — 실시간 정보 조회</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-wrap">
+        <img src="셋째날/15.png" alt="테슬라 주가 웹서치" />
+      </div>
+      <div class="caption">"테슬라 주가 알려줘" → 웹 검색 실행 후 실시간 주가 반환 — 상담 도중 실제 정보가 필요한 경우에도 활용</div>
+    </div>
+  </div>
+
+  <!-- ══════════════ DAY 4 ══════════════ -->
+
+  <!-- SLIDE 21 · 답변 칩 -->
+  <div class="slide" id="s21">
+    <div class="slide-header">
+      <span class="day-badge badge-d4">넷째날</span>
+      <span class="slide-title">답변에 대한 칩(Chip) 자동 생성</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-wrap">
+        <img src="넷째날/1.png" alt="답변 칩" />
+      </div>
+      <div class="caption">AI 답변 아래에 이어질 수 있는 선택지 칩 자동 생성 → 대화 흐름을 자연스럽게 유도</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 22a · 리버스 프록시 1/4 -->
+  <div class="slide" id="s22a">
+    <div class="slide-header">
+      <span class="day-badge badge-d4">넷째날</span>
+      <span class="slide-title">리버스 프록시 구성 — Cloudflare (1/4)</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-pair">
+        <div class="img-slot"><img src="넷째날/3.png" alt="리버스프록시 3" /></div>
+        <div class="img-slot"><img src="넷째날/4.png" alt="리버스프록시 4" /></div>
+      </div>
+      <div class="caption">Vercel이 일부 환경에서 차단되는 케이스 발견 → Cloudflare 리버스 프록시 구성 시작</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 22b · 리버스 프록시 2/4 -->
+  <div class="slide" id="s22b">
+    <div class="slide-header">
+      <span class="day-badge badge-d4">넷째날</span>
+      <span class="slide-title">리버스 프록시 구성 — Cloudflare (2/4)</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-pair">
+        <div class="img-slot"><img src="넷째날/5.png" alt="리버스프록시 5" /></div>
+        <div class="img-slot"><img src="넷째날/6.png" alt="리버스프록시 6" /></div>
+      </div>
+      <div class="caption">cubie.kr 도메인 네임서버를 Cloudflare로 이전 → DNS 설정</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 22c · 리버스 프록시 3/4 -->
+  <div class="slide" id="s22c">
+    <div class="slide-header">
+      <span class="day-badge badge-d4">넷째날</span>
+      <span class="slide-title">리버스 프록시 구성 — Cloudflare (3/4)</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-pair">
+        <div class="img-slot"><img src="넷째날/7.png" alt="리버스프록시 7" /></div>
+        <div class="img-slot"><img src="넷째날/8.png" alt="리버스프록시 8" /></div>
+      </div>
+      <div class="caption">Cloudflare 프록시 레코드 설정 → Vercel 우회 경로 구성</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 22d · 리버스 프록시 4/4 -->
+  <div class="slide" id="s22d">
+    <div class="slide-header">
+      <span class="day-badge badge-d4">넷째날</span>
+      <span class="slide-title">리버스 프록시 구성 — Cloudflare (4/4)</span>
+    </div>
+    <div class="slide-body">
+      <div class="img-wrap">
+        <img src="넷째날/9.png" alt="리버스프록시 9" />
+      </div>
+      <div class="caption">설정 완료 — Cloudflare 리버스 프록시를 통해 차단 없이 서비스 접속 가능</div>
+    </div>
+  </div>
+
+  <!-- ══════════════ 느낀점 ══════════════ -->
+
+  <!-- SLIDE 23 · 느낀점 -->
+  <div class="slide" id="s23">
+    <div class="slide-header">
+      <span class="day-badge badge-dp">느낀점</span>
+      <span class="slide-title">12시간 후기 — 장점 &amp; 단점</span>
+    </div>
+    <div class="slide-body">
+      <div class="reflection">
+        <div class="ref-box" style="border-color:rgba(78,203,164,0.3);">
+          <h3 style="color:var(--accent2);">장점</h3>
+          <ul>
+            <li>원하는 기능을 <strong>빠르게</strong> 구현 — 아이디어 → 동작하는 서비스까지 12시간</li>
+            <li>FE · 인프라 등 <strong>약한 영역</strong>도 Claude가 보조 → 혼자서 풀스택 가능</li>
+            <li>기획 · 문서 · UI · 코드를 하나의 흐름으로 처리 — <strong>컨텍스트 유지</strong>가 핵심</li>
+            <li>코드 짜는 게 <strong>재밌어짐</strong> — 개발에 대한 흥미 · 몰입도 상승</li>
+          </ul>
+        </div>
+        <div class="ref-box" style="border-color:rgba(219,107,107,0.3);">
+          <h3 style="color:var(--d3);">단점 / 주의점</h3>
+          <ul>
+            <li>실제 프로덕션 배포엔 <strong>리스크</strong> 존재 — 보안 · 성능 · 엣지케이스 검토 필요</li>
+            <li>Claude가 틀릴 수 있음 — <strong>정확한 도메인 지식</strong>이 있어야 시너지 극대화</li>
+            <li>대충 알고 쓰면 대충 나옴 — <strong>질문의 질</strong>이 결과물의 질을 결정</li>
+            <li>"빠르게 만들기"와 "잘 만들기"는 다름 — <strong>MVP 이후 리팩토링</strong> 필수</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 24 · END -->
+  <div class="slide" id="s24">
+    <div class="slide-body" style="justify-content:center; gap:0;">
+      <div style="text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px;">
+        <div style="font-size:12px; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase;">Try it now</div>
+        <div class="end-url">gohae.cubie.kr</div>
+        <div style="color:var(--muted); font-size:13px;">나를 기억하는 AI 상담 서비스</div>
+        <div class="stack-box">
+          <strong>Stack</strong>
+          <div>Next.js 16 · TypeScript · Supabase (pgvector)</div>
+          <div>Anthropic Claude API · Vercel AI SDK</div>
+          <div>Drizzle ORM · Tailwind v4 · Cloudflare</div>
+        </div>
+        <div style="margin-top:20px; font-size:18px; font-weight:700; color:var(--muted);">감사합니다</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- #deck -->
+
+<button class="nav-btn" id="btn-prev">&#8592;</button>
+<button class="nav-btn" id="btn-next">&#8594;</button>
+<div id="footer"><span id="slide-num">1</span> / <span id="slide-total"></span></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total  = slides.length;
+  document.getElementById('slide-total').textContent = total;
+  let cur = 0;
+
+  function go(n) {
+    slides[cur].classList.remove('active');
+    cur = ((n % total) + total) % total;
+    slides[cur].classList.add('active');
+    document.getElementById('slide-num').textContent = cur + 1;
+  }
+
+  document.getElementById('btn-prev').addEventListener('click', () => go(cur - 1));
+  document.getElementById('btn-next').addEventListener('click', () => go(cur + 1));
+
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight', 'ArrowDown', ' '].includes(e.key)) { e.preventDefault(); go(cur + 1); }
+    if (['ArrowLeft',  'ArrowUp'       ].includes(e.key)) { e.preventDefault(); go(cur - 1); }
+  });
+
+  let tx = 0;
+  document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend',   e => {
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 50) go(dx < 0 ? cur + 1 : cur - 1);
+  });
+</script>
+</body>
+</html>
